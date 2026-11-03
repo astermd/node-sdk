@@ -16,8 +16,8 @@ export type TreatmentIdVerificationMethod = 'ssn' | 'dob' | 'cross_check' | 'doc
 export interface TreatmentCardOptions {
   /** The card network. */
   type: TreatmentCardType;
-  /** The card's bank identification number, when available. */
-  bin?: string;
+  /** The card's last four digits, when available. */
+  last_4?: string;
   /** The card's expiry, in the format your integration agreed with AsterMD. */
   exp: string;
 }

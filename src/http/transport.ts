@@ -67,7 +67,7 @@ export interface TransportOptions {
  * building, body serialisation, dispatch through the {@link HttpClient} seam,
  * envelope decoding, and the mapping from HTTP status to error class. Resources
  * never see a `Request`, a `Response`, or a line of JSON - that separation is
- * what keeps seventeen resource classes trivial and testable.
+ * what keeps eighteen resource classes trivial and testable.
  *
  * The 401-retry protocol is built in. On a 401 the transport calls
  * `onUnauthorized` once, which in the production wiring refreshes the token, and

@@ -6,6 +6,7 @@ describe('public surface', () => {
     const expected = [
       'AsterMDClient',
       'Config',
+      'Coupons',
       'Response',
       'AbstractResource',
       'Sessions',
