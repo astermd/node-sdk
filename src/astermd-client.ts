@@ -13,6 +13,7 @@ import { Carts } from './resource/carts.js';
 import { Categories } from './resource/categories.js';
 import { Channels } from './resource/channels.js';
 import { CheckoutEvents } from './resource/checkout-events.js';
+import { Coupons } from './resource/coupons.js';
 import { DoctorsNetworks } from './resource/doctors-networks.js';
 import { Geo } from './resource/geo.js';
 import { IntakeSubmissions } from './resource/intake-submissions.js';
@@ -72,7 +73,7 @@ export interface AsterMDClientOptions {
 }
 
 /**
- * The SDK's entry point: one client, seventeen resources.
+ * The SDK's entry point: one client, eighteen resources.
  *
  * Construct it once at application start and share it. It holds the credentials,
  * caches the bearer token, and owns the single transport every resource dispatches
@@ -123,6 +124,7 @@ export class AsterMDClient {
   #patients?: Patients;
   #opportunities?: Opportunities;
   #treatments?: Treatments;
+  #coupons?: Coupons;
   #doctorsNetworks?: DoctorsNetworks;
   #channels?: Channels;
   #products?: Products;
@@ -259,6 +261,11 @@ export class AsterMDClient {
   /** Treatments - the order, once payment has settled. */
   treatments(): Treatments {
     return (this.#treatments ??= new Treatments(this.#transport));
+  }
+
+  /** Coupons - checking a code the shopper typed against their cart. */
+  coupons(): Coupons {
+    return (this.#coupons ??= new Coupons(this.#transport));
   }
 
   /** Doctors' networks - handing a case to the clinicians who review it. */

@@ -174,7 +174,7 @@ describe('Treatments.sync', () => {
         preAuth: true,
         preAuthQa: false,
         preAuthAmount: 100.99,
-        card: { type: 'visa', bin: '411111', exp: '12/29' },
+        card: { type: 'visa', last_4: '4242', exp: '12/29' },
       },
     });
 
@@ -184,7 +184,7 @@ describe('Treatments.sync', () => {
         pre_auth: true,
         pre_auth_qa: false,
         pre_auth_amount: 100.99,
-        card: { type: 'visa', bin: '411111', exp: '12/29' },
+        card: { type: 'visa', last_4: '4242', exp: '12/29' },
       },
     });
   });

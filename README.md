@@ -78,7 +78,7 @@ per request throws that cache away.
 ## Resources
 
 `sessions`, `intakeSubmissions`, `carts`, `checkoutEvents`, `teleforms`,
-`patients`, `opportunities`, `treatments`, `doctorsNetworks`, `channels`,
+`patients`, `opportunities`, `treatments`, `coupons`, `doctorsNetworks`, `channels`,
 `products`, `categories`, `labTests`, `medications`, `shippings`,
 `verification`, `geo`.
 

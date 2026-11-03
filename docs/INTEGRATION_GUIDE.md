@@ -35,7 +35,7 @@ The SDK is a thin, typed wrapper around the AsterMD public REST API.
 your app
   └── AsterMDClient
         ├── .sessions()         .intakeSubmissions()    .carts()           .teleforms()
-        ├── .patients()         .opportunities()   .treatments()
+        ├── .patients()         .opportunities()   .treatments()   .coupons()
         ├── .doctorsNetworks()  .channels()
         └── catalog: .products() / .categories() / .labTests()
                      .medications() / .shippings()
@@ -592,7 +592,27 @@ a debug log.
 `{ session, orderIds, userAgent, utmSource?, payment?, verification? }`.
 `userAgent` is required - an empty or missing value throws `TypeError`. Use
 `sync()` to push an order settled in an external CRM into AsterMD after
-settlement happens outside the SDK.
+settlement happens outside the SDK. In `payment.card`, `type` and `exp` are
+required and `last_4` (the card's last four digits) is optional.
+
+### `coupons()`
+
+| Method                                                           | HTTP | Path                         |
+| ---------------------------------------------------------------- | ---- | ---------------------------- |
+| `validate(options: CouponValidateOptions): Promise<Response<T>>` | POST | `/v1/sales/coupons/validate` |
+
+`CouponValidateOptions` is `{ code, items, patientId?, email?, opportunityId? }`.
+`items` is the cart, main item first, 1 to 6 lines; each line is either
+`{ plan_id, quantity }` or `{ product_id, variant_id, quantity }` (never both),
+with `quantity` an integer from 1 to 999. Never send amounts - AsterMD prices the
+cart itself. The optional identifiers name the shopper and are sent only when
+provided; when several are given the server uses `patientId`, then `email`, then
+`opportunityId`. Call it when the shopper applies a code, before creating the
+payment. A check redeems nothing. `data()` holds `coupon_id`, `name`,
+`discount_type`, `value`, `tiers`, `default_scope`, `gross_amount_cents`,
+`discount_cents`, `amount_cents`, `currency` and the discounted `items`. An
+unknown code throws `NotFoundError` (404); any other refusal throws
+`ValidationError` (422).
 
 ### `doctorsNetworks()`
 

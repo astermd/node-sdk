@@ -14,7 +14,8 @@ For end-user usage see `docs/INTEGRATION_GUIDE.md`.
 │  AsterMDClient                 ← entry point, holds collaborators     │
 │   • config()                                                          │
 │   • sessions()  intakeSubmissions()  teleforms()  patients()          │
-│   • opportunities()  treatments()  doctorsNetworks()  channels()      │
+│   • opportunities()  treatments()  coupons()  doctorsNetworks()      │
+│   • channels()                                                        │
 │   • products() categories() labTests() medications() shippings()      │
 │   • verification()  geo()                                             │
 └─────────────────────────────┬────────────────────────────────────────┘
@@ -80,6 +81,7 @@ src/
 │   ├── patients.ts             /v1/sales/patients/*
 │   ├── opportunities.ts       /v1/sales/opportunities/*
 │   ├── treatments.ts           /v1/sales/treatments/*
+│   ├── coupons.ts              /v1/sales/coupons/validate
 │   ├── doctors-networks.ts    /v1/sales/doctors-networks/sync (+ client-side validation)
 │   ├── channels.ts             /v1/sales/channels/*
 │   ├── products.ts             /v1/sales/products/*

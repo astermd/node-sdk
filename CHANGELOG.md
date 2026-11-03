@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] - 2026-11-03
+
+### Added
+
+- `coupons().validate()` checks a coupon code against a cart
+  (`POST /v1/sales/coupons/validate`) without redeeming it. New exported types
+  `Coupons`, `CouponCartItem`, and `CouponValidateOptions`.
+
+### Changed
+
+- **BREAKING:** `treatments().sync()` payment `card` sub-object: `bin` is
+  replaced by `last_4` (the card's last four digits, optional).
+
 ## [0.0.3] - 2026-09-21
 
 ### Changed

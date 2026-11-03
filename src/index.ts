@@ -47,6 +47,7 @@ export {
   type TreatmentIdVerificationOptions,
   type TreatmentIdVerificationMethod,
 } from './resource/treatments.js';
+export { Coupons, type CouponCartItem, type CouponValidateOptions } from './resource/coupons.js';
 export { Channels } from './resource/channels.js';
 export { DoctorsNetworks } from './resource/doctors-networks.js';
 export { Categories } from './resource/categories.js';
