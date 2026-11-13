@@ -1,7 +1,7 @@
 {
   "name": "@astermd-hq/sdk",
-  "version": "0.0.4",
-  "description": "Official Node.js SDK for the AsterMD order-flow API.",
+  "version": "0.0.5",
+  "description": "Official Node.js SDK for the AsterMD telehealth API: sessions, intake forms and orders.",
   "keywords": [
     "astermd",
     "sdk",
@@ -12,15 +12,15 @@
     "typescript"
   ],
   "license": "MIT",
-  "author": "AsterMD <admin@astermd.com>",
-  "homepage": "https://www.astermd.com",
+  "author": "AsterMD <hello@astermd.com>",
+  "homepage": "https://www.astermd.com/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/astermd/npm-sdk.git"
+    "url": "git+https://github.com/astermd/node-sdk.git"
   },
   "bugs": {
-    "url": "https://github.com/astermd/npm-sdk/issues",
-    "email": "info@astermd.com"
+    "url": "https://github.com/astermd/node-sdk/issues",
+    "email": "hello@astermd.com"
   },
   "type": "module",
   "main": "./dist/index.cjs",

@@ -26,7 +26,7 @@ const IV_LENGTH = 16;
  *
  * The AES key is **never** stored in this SDK. Supply it at every call site from
  * your own configuration - an environment variable, a secrets manager - and keep
- * it in step with whichever service mints the tokens. Contact info@astermd.com to
+ * it in step with whichever service mints the tokens. Contact hello@astermd.com to
  * obtain or rotate the key for your organisation.
  *
  * **On integrity:** AES-CBC provides confidentiality but not authentication, so a

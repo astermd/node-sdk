@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-Please report security vulnerabilities privately to **info@astermd.com**.
+Please report security vulnerabilities privately to **hello@astermd.com**.
 
 Do **not** open a public issue for a security report. Public disclosure before a
 fix is available puts every integrator at risk.
@@ -53,4 +53,4 @@ information. A few obligations sit with you, the integrator:
   over the wire.
 - **Using this SDK does not by itself make your application HIPAA compliant.**
   Compliance depends on your own infrastructure, policies, and agreements.
-  Contact info@astermd.com regarding a Business Associate Agreement.
+  Contact hello@astermd.com regarding a Business Associate Agreement.

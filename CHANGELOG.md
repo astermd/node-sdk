@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5] - 2026-11-13
+
+### Changed
+
+- Documentation and package metadata only: README header, intro, compliance,
+  trademarks and About sections; contact email is now hello@astermd.com;
+  `homepage`, `repository` and `bugs` URLs point to `astermd/node-sdk`. No code
+  or API changes.
+
 ## [0.0.4] - 2026-11-03
 
 ### Added
