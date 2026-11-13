@@ -254,7 +254,7 @@ Questions, access requests, and licensing enquiries: **hello@astermd.com**
 
 ## License
 
-[MIT](LICENSE) © 2026 AsterMD
+[MIT](LICENSE) © 2026 CodeClouds™ DBA AsterMD
 
 ## Trademarks
 
