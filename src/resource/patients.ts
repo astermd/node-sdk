@@ -41,7 +41,7 @@ export interface SubmitHealthInformationOptions {
  *
  * Handling this data does not by itself make your application HIPAA compliant -
  * that depends on your own infrastructure, policies, and agreements. Contact
- * info@astermd.com regarding a Business Associate Agreement.
+ * hello@astermd.com regarding a Business Associate Agreement.
  */
 export class Patients extends AbstractResource {
   /**
