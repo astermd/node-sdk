@@ -27,6 +27,20 @@ describe('Sessions.create', () => {
     expect(JSON.parse(http.lastRequest().body)).toEqual({ utm_source: 'newsletter', ref: 'abc' });
   });
 
+  it('forwards an affiliate_link_id alongside the attribution payload', async () => {
+    const { transport, http } = makeHarness();
+    http.enqueueJson(201, OK_ENVELOPE);
+
+    const data = {
+      utm: { source: 'fb' },
+      custom_params: { c1: '123' },
+      affiliate_link_id: '0123456789abcdef01234567',
+    };
+    await new Sessions(transport).create({ data });
+
+    expect(JSON.parse(http.lastRequest().body)).toEqual(data);
+  });
+
   it('forwards the visitor user agent and client IP as headers', async () => {
     const { transport, http } = makeHarness();
     http.enqueueJson(201, OK_ENVELOPE);

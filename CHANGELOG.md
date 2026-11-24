@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-24
+
+### Added
+
+- `sessions().create()` documents the optional `affiliate_link_id` field in
+  `data`: the plain affiliate link id or the encrypted `_amd` token from an
+  affiliate link (with or without the `_amd=` prefix). The server resolves the
+  link and its affiliate, and silently drops a value it cannot read. It is
+  ignored by `sessions().update()`. `sessions().view()` now returns
+  `affiliate_link_id` and `affiliate_id` on each session's read-model.
+- `opportunities().create()` and `opportunities().update()` document the
+  optional `attribution` object, including `affiliate_link_id` (same
+  semantics); the server fills `attribution.affiliate_id` from the link.
+  Pass-through data, this only documents the shape.
+
 ## [0.0.5] - 2026-11-13
 
 ### Changed

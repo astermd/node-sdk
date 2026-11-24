@@ -42,6 +42,14 @@ export class Opportunities extends AbstractResource {
    * server can attribute the lead. The rest of the payload is forwarded
    * unmodified.
    *
+   * An optional `attribution` object carries the lead's marketing attribution
+   * (`utm_source`, `utm_medium`, `utm_campaign`, `c1`…`c5`, and so on). It
+   * accepts an `affiliate_link_id` string - the plain affiliate link id or the
+   * encrypted token from the link's `_amd` query parameter, with or without the
+   * `_amd=` prefix. The server resolves the link and sets
+   * `attribution.affiliate_id` to its owning affiliate, and silently drops a link
+   * value it cannot read rather than rejecting the request.
+   *
    * @param data The prospect's details and the sessions to attach.
    * @returns The created opportunity, including its id.
    * @throws {ValidationError} If a field is missing or rejected.
@@ -82,7 +90,8 @@ export class Opportunities extends AbstractResource {
    * information arrives - a phone number, a later session to attach.
    *
    * @param id The opportunity's id.
-   * @param data The fields to change.
+   * @param data The fields to change. Accepts the same `attribution` object,
+   *   including `affiliate_link_id`, documented on {@link Opportunities.create}.
    * @returns The updated opportunity.
    * @throws {NotFoundError} If the opportunity does not exist.
    * @throws {ValidationError} If a field is rejected.
