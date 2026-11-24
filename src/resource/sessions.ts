@@ -12,6 +12,12 @@ export interface SessionCreateOptions {
    * performed by the caller - every field inside it is optional too: `email`
    * (boolean), `address` (boolean), and `id` (`verified` boolean, `method` -
    * `ssn` | `dob` | `cross_check` | `document_upload`, `value` string).
+   *
+   * May also include an optional `affiliate_link_id` string - the affiliate link
+   * that brought the visitor: either the plain affiliate link id or the encrypted
+   * token from the link's `_amd` query parameter, with or without the `_amd=`
+   * prefix. The server resolves it to the link and its owning affiliate, and
+   * silently drops a value it cannot read rather than rejecting the request.
    */
   data?: Record<string, unknown>;
   /** The visitor's user agent, forwarded as the `User-Agent` header. */
@@ -104,7 +110,9 @@ export class Sessions extends AbstractResource {
    * Useful for reconstructing a visitor's journey server-side - which forms they
    * touched, where they stopped. Several identifiers can be fetched in one call,
    * which is cheaper than looping. Timestamps come back in `tz` when you supply
-   * one, and in the organisation's default zone otherwise.
+   * one, and in the organisation's default zone otherwise. Each session's
+   * read-model includes `affiliate_link_id` and `affiliate_id` (each a string, or
+   * `null` when the session was not created from an affiliate link).
    *
    * @param options The session identifiers to fetch, and an optional time zone.
    * @returns The sessions and their recorded events.
@@ -141,6 +149,8 @@ export class Sessions extends AbstractResource {
    * @param data Fields to record. Forwarded unmodified; see the API reference in
    *   your AsterMD dashboard for the recognised keys. Accepts the same optional
    *   `verification` object documented on {@link Sessions.create}.
+   *   `affiliate_link_id` is recorded only at creation; the server ignores it
+   *   here.
    * @returns The updated session.
    * @throws {NotFoundError} If the session does not exist.
    * @throws {ValidationError} If the payload is rejected.

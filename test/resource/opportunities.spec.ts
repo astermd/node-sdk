@@ -23,6 +23,20 @@ describe('Opportunities', () => {
     });
   });
 
+  it('forwards attribution.affiliate_link_id on create', async () => {
+    const { transport, http } = makeHarness();
+    http.enqueueJson(201, OK_ENVELOPE);
+
+    const data = {
+      first_name: 'Jane',
+      email: 'jane@example.test',
+      attribution: { affiliate_link_id: 'encrypted-token' },
+    };
+    await new Opportunities(transport).create(data);
+
+    expect(JSON.parse(http.lastRequest().body)).toEqual(data);
+  });
+
   it('gets opportunities/view/{id}', async () => {
     const { transport, http } = makeHarness();
     http.enqueueJson(200, OK_ENVELOPE);

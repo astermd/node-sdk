@@ -170,6 +170,17 @@ const { session: attributedSession } = (
 //   userAgent: request.headers['user-agent'],
 //   clientIp: request.ip,
 // });
+
+// Visitor arrived on an affiliate link? Pass the raw `_amd` query value (or the
+// plain affiliate link id) as `affiliate_link_id`. The server resolves the link
+// and its affiliate; a value it cannot read is dropped, never an error.
+// await client.sessions().create<{ session: string }>({
+//   data: {
+//     utm: { source: 'fb' },
+//     custom_params: { c1: '123' },
+//     affiliate_link_id: request.query._amd,
+//   },
+// });
 ```
 
 ### Step 2 — Pre-qualifying (identity check, basic questions)
@@ -304,6 +315,7 @@ const opportunity = (
     first_name: 'Jane',
     email: 'jane@example.com',
     sessions: [session],
+    // attribution: { affiliate_link_id: request.query._amd }, // optional, same semantics as on the session
     // … other opportunity fields
   })
 ).data();
