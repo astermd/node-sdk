@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.9] - 2026-11-28
+
+### Fixed
+
+- `checkoutEvents().create()` takes an optional trailing `event`
+  (`CheckoutEvent`, default `CheckoutVisited`), so `AddedShippingInfo` and
+  `AddedPaymentInfo` can be recorded. Previously `create()` always sent
+  `checkout_visited` and the docs pointed those stages at `update()`, which
+  returns 404 when no checkout record exists for the session. Docs and the
+  `CheckoutEvent` enum now point `added_*` events at `create()`.
+
 ## [0.0.8] - 2026-11-27
 
 ### Added

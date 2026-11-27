@@ -68,6 +68,55 @@ describe('CheckoutEvents.create', () => {
     });
   });
 
+  it('posts added_shipping_info to checkout-events/create', async () => {
+    const { transport, http } = makeHarness();
+    http.enqueueJson(201, OK_ENVELOPE);
+
+    await new CheckoutEvents(transport).create(
+      's-1',
+      { product_id: '64b2f0c7e3a1d2b3c4e5f6b1', order_total: 159.99 },
+      CheckoutEvent.AddedShippingInfo,
+    );
+
+    const request = http.lastRequest();
+    expect(request.url).toBe('https://api.astermd.com/v1/sales/checkout-events/create');
+    expect(request.method).toBe('POST');
+    expect(JSON.parse(request.body)).toEqual({
+      session: 's-1',
+      event: 'added_shipping_info',
+      currency: 'USD',
+      product_id: '64b2f0c7e3a1d2b3c4e5f6b1',
+      order_total: 159.99,
+    });
+  });
+
+  it('posts added_payment_info with its payment_method', async () => {
+    const { transport, http } = makeHarness();
+    http.enqueueJson(201, OK_ENVELOPE);
+
+    await new CheckoutEvents(transport).create(
+      's-1',
+      { payment_method: 'card', currency: 'CAD' },
+      CheckoutEvent.AddedPaymentInfo,
+    );
+
+    expect(JSON.parse(http.lastRequest().body)).toEqual({
+      session: 's-1',
+      event: 'added_payment_info',
+      currency: 'CAD',
+      payment_method: 'card',
+    });
+  });
+
+  it('does not let the payload override an explicit event', async () => {
+    const { transport, http } = makeHarness();
+    http.enqueueJson(201, OK_ENVELOPE);
+
+    await new CheckoutEvents(transport).create('s-1', { event: 'order_placed' }, CheckoutEvent.AddedShippingInfo);
+
+    expect(JSON.parse(http.lastRequest().body)).toMatchObject({ event: 'added_shipping_info' });
+  });
+
   it('forwards an optional product_id', async () => {
     const { transport, http } = makeHarness();
     http.enqueueJson(201, OK_ENVELOPE);
@@ -115,22 +164,6 @@ describe('CheckoutEvents.update', () => {
     await new CheckoutEvents(transport).update({ session: 's-1', event });
 
     expect(JSON.parse(http.lastRequest().body)).toEqual({ event: wire });
-  });
-
-  it('sends added_payment_info with its payment_method', async () => {
-    const { transport, http } = makeHarness();
-    http.enqueueJson(200, OK_ENVELOPE);
-
-    await new CheckoutEvents(transport).update({
-      session: 's-1',
-      event: CheckoutEvent.AddedPaymentInfo,
-      data: { payment_method: 'card' },
-    });
-
-    expect(JSON.parse(http.lastRequest().body)).toEqual({
-      event: 'added_payment_info',
-      payment_method: 'card',
-    });
   });
 
   it('merges the payload but never lets it override the event', async () => {
