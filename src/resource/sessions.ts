@@ -112,7 +112,11 @@ export class Sessions extends AbstractResource {
    * which is cheaper than looping. Timestamps come back in `tz` when you supply
    * one, and in the organisation's default zone otherwise. Each session's
    * read-model includes `affiliate_link_id` and `affiliate_id` (each a string, or
-   * `null` when the session was not created from an affiliate link).
+   * `null` when the session was not created from an affiliate link), plus
+   * `last_page` - the page most recently reported through
+   * {@link SessionEvents.create}, as `{ type, path, product_id }` with `type` a
+   * {@link PageType} and `product_id` possibly `null` - and `last_page_at`, when
+   * it was viewed. Both are read-only.
    *
    * @param options The session identifiers to fetch, and an optional time zone.
    * @returns The sessions and their recorded events.

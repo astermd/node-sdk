@@ -13,6 +13,13 @@ export interface CartWriteOptions {
    * dashboard for the fields.
    */
   items: Record<string, unknown>[];
+  /**
+   * Your storefront's total for the cart, in major units (e.g. `199.0`). Sent as
+   * `cart_total`; leave it out when unknown.
+   */
+  cartTotal?: number;
+  /** ISO 4217 currency code for `cartTotal`. The server assumes `USD` when omitted. */
+  currency?: string;
 }
 
 /**
@@ -43,8 +50,9 @@ export class Carts extends AbstractResource {
    * session must already exist. If a cart is already recorded for the session,
    * use {@link Carts.update} instead.
    *
-   * @param options The session and the cart's contents.
-   * @returns The created cart.
+   * @param options The session, the cart's contents, and optionally its total
+   *   and currency.
+   * @returns The created cart, including `cart_total` and `currency`.
    * @throws {ValidationError} If the session or an item is rejected.
    * @throws {ApiError} On any other non-2xx status.
    * @throws {TransportError} If the request never completed.
@@ -54,7 +62,7 @@ export class Carts extends AbstractResource {
       service: 'sales',
       method: 'POST',
       path: '/carts/create',
-      body: { session: options.session, items: options.items },
+      body: { session: options.session, ...cartBody(options) },
     });
   }
 
@@ -63,10 +71,12 @@ export class Carts extends AbstractResource {
    *
    * The item list is authoritative: whatever you send becomes the cart. Send the
    * full list on every change rather than only what moved, and pass an empty list
-   * to record that the visitor emptied their cart.
+   * to record that the visitor emptied their cart. Send the new `cartTotal` with
+   * each change so the recorded total stays in step with the items.
    *
-   * @param options The session and the cart's new contents.
-   * @returns The updated cart.
+   * @param options The session, the cart's new contents, and optionally its
+   *   total and currency.
+   * @returns The updated cart, including `cart_total` and `currency`.
    * @throws {NotFoundError} If no cart exists for the session.
    * @throws {ValidationError} If an item is rejected.
    * @throws {ApiError} On any other non-2xx status.
@@ -78,7 +88,22 @@ export class Carts extends AbstractResource {
       method: 'PUT',
       path: '/carts/update/{session}',
       pathParams: { session: options.session },
-      body: { items: options.items },
+      body: cartBody(options),
     });
   }
+}
+
+/** The body fields shared by create and update; the session travels separately. */
+function cartBody(options: CartWriteOptions): Record<string, unknown> {
+  const body: Record<string, unknown> = { items: options.items };
+
+  if (options.cartTotal !== undefined) {
+    body.cart_total = options.cartTotal;
+  }
+
+  if (options.currency !== undefined && options.currency !== '') {
+    body.currency = options.currency;
+  }
+
+  return body;
 }

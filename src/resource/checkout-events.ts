@@ -52,8 +52,9 @@ export class CheckoutEvents extends AbstractResource {
    * currency to interpret any amounts in the payload.
    *
    * @param session The session reaching checkout.
-   * @param data Additional context, e.g. `cart_total`, `items_count`,
-   *   `currency`. Cannot override `session` or `event`.
+   * @param data Additional context, e.g. `order_value`, `order_total`,
+   *   `currency`, or `product_id` (the product being checked out). Cannot
+   *   override `session` or `event`.
    * @returns The created checkout-event record.
    * @throws {ValidationError} If the session or payload is rejected.
    * @throws {ApiError} On any other non-2xx status.
@@ -86,8 +87,11 @@ export class CheckoutEvents extends AbstractResource {
   /**
    * Advances a session's checkout record to a new funnel state.
    *
-   * Send one call per state the visitor reaches: an upsell offered, then accepted
-   * or declined, then the order placed or declined. The payload carries whatever
+   * Send one call per state the visitor reaches: shipping details entered
+   * (`AddedShippingInfo`), payment details entered (`AddedPaymentInfo`, with a
+   * `payment_method` of `apple_pay` | `google_pay` | `card` | `paypal` in
+   * `data`), an upsell offered, then accepted or declined, then the order placed
+   * or declined. The payload carries whatever
    * context that state needs, but it can never override `event` - the state
    * recorded is always the one you passed explicitly. For an `OrderPlaced` event,
    * `data` may include an optional `payment` object describing the settled

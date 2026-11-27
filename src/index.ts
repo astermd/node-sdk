@@ -10,7 +10,7 @@ export {
 } from './errors/index.js';
 export { Config, type ConfigOptions } from './config.js';
 export { Response, type ResponseOptions } from './response.js';
-export { CheckoutEvent, Event, IdentityCheck } from './enum/index.js';
+export { CheckoutEvent, Event, IdentityCheck, PageType, SessionEvent } from './enum/index.js';
 export { FetchHttpClient } from './http/fetch-http-client.js';
 export type { HttpClient } from './http/http-client.js';
 export { FileUpload, type FileUploadFromContentsOptions, type FileUploadFromPathOptions } from './http/file-upload.js';
@@ -22,6 +22,7 @@ export type { DebugSink } from './http/logging-http-client.js';
 export { DailyFileLogSink, type DailyFileLogSinkOptions } from './log/daily-file-log-sink.js';
 export { AbstractResource } from './resource/abstract-resource.js';
 export { Sessions, type SessionCreateOptions, type SessionViewOptions } from './resource/sessions.js';
+export { SessionEvents, type SessionEventCreateOptions, type SessionEventPage } from './resource/session-events.js';
 export { Carts, type CartWriteOptions } from './resource/carts.js';
 export { CheckoutEvents, type CheckoutEventUpdateOptions } from './resource/checkout-events.js';
 export { Teleforms } from './resource/teleforms.js';

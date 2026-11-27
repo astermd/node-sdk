@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.8] - 2026-11-27
+
+### Added
+
+- `sessionEvents()` resource: `create()` records a `page_view` (with a `page`
+  describing the page opened) or a `begin_identity_verification` against a
+  session; `view(id)` fetches one recorded event. New `SessionEvent` and
+  `PageType` enums, and `SessionEventCreateOptions` / `SessionEventPage` types.
+- `carts().create()` and `carts().update()` accept optional `cartTotal` (sent
+  as `cart_total`, major units) and `currency` (ISO 4217).
+- `CheckoutEvent.AddedShippingInfo` and `CheckoutEvent.AddedPaymentInfo`.
+  `checkoutEvents().create()` documents the optional `product_id`.
+- `sessions().view()` documents the read-only `last_page` and `last_page_at`
+  fields.
+
 ## [0.0.7] - 2026-11-24
 
 ### Added

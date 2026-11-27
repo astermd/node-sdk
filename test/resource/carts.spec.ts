@@ -28,6 +28,29 @@ describe('Carts.create', () => {
 
     expect(JSON.parse(http.lastRequest().body)).toEqual({ session: 's-1', items: [] });
   });
+
+  it('sends cartTotal as cart_total, with the currency', async () => {
+    const { transport, http } = makeHarness();
+    http.enqueueJson(201, OK_ENVELOPE);
+
+    await new Carts(transport).create({ session: 's-1', items, cartTotal: 199, currency: 'USD' });
+
+    expect(JSON.parse(http.lastRequest().body)).toEqual({
+      session: 's-1',
+      items,
+      cart_total: 199,
+      currency: 'USD',
+    });
+  });
+
+  it('sends a zero cart total and omits an empty currency', async () => {
+    const { transport, http } = makeHarness();
+    http.enqueueJson(201, OK_ENVELOPE);
+
+    await new Carts(transport).create({ session: 's-1', items: [], cartTotal: 0, currency: '' });
+
+    expect(JSON.parse(http.lastRequest().body)).toEqual({ session: 's-1', items: [], cart_total: 0 });
+  });
 });
 
 describe('Carts.update', () => {
@@ -41,5 +64,14 @@ describe('Carts.update', () => {
     expect(request.url).toBe('https://api.astermd.com/v1/sales/carts/update/s-1');
     expect(request.method).toBe('PUT');
     expect(JSON.parse(request.body)).toEqual({ items });
+  });
+
+  it('sends cartTotal as cart_total, with the currency, still keeping the session out of the body', async () => {
+    const { transport, http } = makeHarness();
+    http.enqueueJson(200, OK_ENVELOPE);
+
+    await new Carts(transport).update({ session: 's-1', items, cartTotal: 597.5, currency: 'CAD' });
+
+    expect(JSON.parse(http.lastRequest().body)).toEqual({ items, cart_total: 597.5, currency: 'CAD' });
   });
 });
