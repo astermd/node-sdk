@@ -74,6 +74,7 @@ src/
 ├── resource/
 │   ├── abstract-resource.ts   base; only knows about Transport
 │   ├── sessions.ts            /v1/sales/sessions/*
+│   ├── session-events.ts      /v1/sales/session-events/*
 │   ├── intake-submissions.ts  /v1/sales/intake-submissions/*, plus file and multipart uploads
 │   ├── carts.ts                /v1/sales/carts/*
 │   ├── checkout-events.ts     /v1/sales/checkout-events/*
@@ -97,7 +98,9 @@ src/
 │   └── query-param-cipher.ts  AES-128-CBC codec for encrypted URL params (caller supplies the key)
 ├── enum/
 │   ├── event.ts                pre_qualifying_* / intake_* events
-│   ├── checkout-event.ts      checkout_visited / upsell_* / order_* events
+│   ├── checkout-event.ts      checkout_visited / added_*_info / upsell_* / order_* events
+│   ├── session-event.ts       page_view / begin_identity_verification
+│   ├── page-type.ts           home / product / cart / … / other
 │   └── identity-check.ts      crosscheck / dob_verify / ssn_verify
 └── errors/
     ├── astermd-error.ts       abstract base

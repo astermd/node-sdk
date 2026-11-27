@@ -1,6 +1,6 @@
 {
   "name": "@astermd-hq/sdk",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Official Node.js SDK for the AsterMD telehealth API: sessions, intake forms and orders.",
   "keywords": [
     "astermd",

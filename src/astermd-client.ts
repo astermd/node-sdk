@@ -22,6 +22,7 @@ import { Medications } from './resource/medications.js';
 import { Opportunities } from './resource/opportunities.js';
 import { Patients } from './resource/patients.js';
 import { Products } from './resource/products.js';
+import { SessionEvents } from './resource/session-events.js';
 import { Sessions } from './resource/sessions.js';
 import { Shippings } from './resource/shippings.js';
 import { Teleforms } from './resource/teleforms.js';
@@ -73,7 +74,7 @@ export interface AsterMDClientOptions {
 }
 
 /**
- * The SDK's entry point: one client, eighteen resources.
+ * The SDK's entry point: one client, nineteen resources.
  *
  * Construct it once at application start and share it. It holds the credentials,
  * caches the bearer token, and owns the single transport every resource dispatches
@@ -117,6 +118,7 @@ export class AsterMDClient {
   readonly #transport: Transport;
 
   #sessions?: Sessions;
+  #sessionEvents?: SessionEvents;
   #intakeSubmissions?: IntakeSubmissions;
   #carts?: Carts;
   #checkoutEvents?: CheckoutEvents;
@@ -226,6 +228,11 @@ export class AsterMDClient {
   /** Sessions - the thread tying one visitor's journey together. */
   sessions(): Sessions {
     return (this.#sessions ??= new Sessions(this.#transport));
+  }
+
+  /** Session events - page views and other moments in a visitor's journey. */
+  sessionEvents(): SessionEvents {
+    return (this.#sessionEvents ??= new SessionEvents(this.#transport));
   }
 
   /** Intake submissions - pre-qualifying and intake questionnaire answers. */

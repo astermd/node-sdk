@@ -34,7 +34,8 @@ The SDK is a thin, typed wrapper around the AsterMD public REST API.
 ```
 your app
   └── AsterMDClient
-        ├── .sessions()         .intakeSubmissions()    .carts()           .teleforms()
+        ├── .sessions()         .sessionEvents()   .intakeSubmissions()    .carts()
+        ├── .checkoutEvents()   .teleforms()
         ├── .patients()         .opportunities()   .treatments()   .coupons()
         ├── .doctorsNetworks()  .channels()
         └── catalog: .products() / .categories() / .labTests()
@@ -138,7 +139,7 @@ UUID (cookie / your own server-side session store / database) so you can
 resume from any step.
 
 ```ts
-import { AsterMDClient, Event } from '@astermd-hq/sdk';
+import { AsterMDClient, Event, PageType, SessionEvent } from '@astermd-hq/sdk';
 
 const client = new AsterMDClient({
   clientId: process.env.ASTERMD_CLIENT_ID!,
@@ -181,6 +182,15 @@ const { session: attributedSession } = (
 //     affiliate_link_id: request.query._amd,
 //   },
 // });
+
+// Report every page the visitor opens. The page becomes the session's
+// `last_page` (where a visitor who drops off left) without moving the funnel
+// step. `type` is one of the fixed `PageType` values.
+await client.sessionEvents().create({
+  session,
+  event: SessionEvent.PageView,
+  page: { type: PageType.Product, path: '/products/semaglutide', product_id: '6a1c28f05f315cee0e41c301' },
+});
 ```
 
 ### Step 2 — Pre-qualifying (identity check, basic questions)
@@ -283,6 +293,8 @@ await client.carts().create({
     { product_id: '6a1c28f05f315cee0e41c301', name: 'Semaglutide', qty: 2 },
     { product_id: '6a1c28f05f315cee0e41c357', name: 'Tirzepatide', qty: 3 },
   ],
+  cartTotal: 597.0, // optional: your storefront's total, in major units
+  currency: 'USD', // optional: ISO 4217; the server assumes USD when omitted
 });
 
 // Later — user changes their mind (send the full replacement list)
@@ -500,11 +512,31 @@ and can be supplied as a type argument on the method itself (not on `.data()`).
 | `update(session: string, data?: Record<string, unknown>): Promise<Response<T>>` | PUT    | `/v1/sales/sessions/update/{id}`        |
 | `delete(session: string): Promise<Response<T>>`                                 | DELETE | `/v1/sales/sessions/delete/{id}`        |
 
+`view()` returns each session's `last_page` (`{ type, path, product_id }`) and
+`last_page_at`, set from the most recent page view reported through
+`sessionEvents()`.
+
 `SessionCreateOptions` is `{ data?, userAgent?, clientIp? }` — `userAgent` and
 `clientIp` are forwarded as the `User-Agent` and `X-Original-Client-Ip`
 headers. `SessionViewOptions` is `{ sessions: string[], tz? }` — the
 identifiers are comma-joined into the `session_ids` query parameter, and
 several can be fetched in one round-trip.
+
+### `sessionEvents()`
+
+| Method                                                             | HTTP | Path                                 |
+| ------------------------------------------------------------------ | ---- | ------------------------------------ |
+| `create(options: SessionEventCreateOptions): Promise<Response<T>>` | POST | `/v1/sales/session-events/create`    |
+| `view(id: string): Promise<Response<T>>`                           | GET  | `/v1/sales/session-events/view/{id}` |
+
+`SessionEventCreateOptions` is `{ session, event, page?, meta? }`. `event` is a
+`SessionEvent`:
+
+- `SessionEvent.PageView` — `page` is required: `{ type, path, url?, title?,
+referrer?, product_id? }`, where `type` is a `PageType` (`Home`, `Product`,
+  `Cart`, `Intake`, `Checkout`, `Upsell`, `ThankYou`, `Cms`, `Other`).
+- `SessionEvent.BeginIdentityVerification` — send when the visitor starts
+  identity verification; optional `meta` is stored as sent.
 
 ### `intakeSubmissions()`
 
@@ -542,7 +574,8 @@ See §8 for the upload methods in detail.
 | `create(options: CartWriteOptions): Promise<Response<T>>` | POST | `/v1/sales/carts/create`           |
 | `update(options: CartWriteOptions): Promise<Response<T>>` | PUT  | `/v1/sales/carts/update/{session}` |
 
-`CartWriteOptions` is `{ session, items }`. `items` is the cart's _whole_
+`CartWriteOptions` is `{ session, items, cartTotal?, currency? }`; `cartTotal`
+is sent as `cart_total` (major units) and the cart response carries both. `items` is the cart's _whole_
 contents, not a delta. Each entry identifies a product and quantity, and a
 variant where the product has them — see the API reference in your AsterMD
 dashboard for the exact fields. The journey event and `channel_id` are derived
@@ -557,7 +590,10 @@ server-side, so the SDK does not send them.
 
 `create()` always records `CheckoutEvent.CheckoutVisited` and defaults
 `currency` to `USD` when the payload does not supply one. `update()`'s options
-are `{ session, event, data? }`; the payload can never override `event`.
+are `{ session, event, data? }`; the payload can never override `event`. Report
+`CheckoutEvent.AddedShippingInfo` when the visitor submits shipping details and
+`CheckoutEvent.AddedPaymentInfo` (with `payment_method` in `data`) when they
+submit payment details.
 
 ### `teleforms()`
 

@@ -59,11 +59,12 @@ describe('AsterMDClient construction', () => {
 });
 
 describe('AsterMDClient resource accessors', () => {
-  it('exposes all eighteen resources', () => {
+  it('exposes all nineteen resources', () => {
     const { client } = makeClient();
 
     const accessors = [
       'sessions',
+      'sessionEvents',
       'intakeSubmissions',
       'carts',
       'checkoutEvents',
@@ -83,7 +84,7 @@ describe('AsterMDClient resource accessors', () => {
       'geo',
     ] as const;
 
-    expect(accessors).toHaveLength(18);
+    expect(accessors).toHaveLength(19);
 
     for (const accessor of accessors) {
       expect(typeof client[accessor]).toBe('function');

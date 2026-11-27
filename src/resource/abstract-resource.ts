@@ -6,7 +6,7 @@ import type { Transport } from '../http/transport.js';
  * Resource classes extend this and call `this.transport.send()` to dispatch every
  * outbound request. A resource never builds a request, touches a header, or
  * decodes JSON - all of that belongs to `Transport` alone. That is what keeps
- * eighteen resource classes small enough to read at a glance and testable
+ * nineteen resource classes small enough to read at a glance and testable
  * without a network.
  */
 export abstract class AbstractResource {
