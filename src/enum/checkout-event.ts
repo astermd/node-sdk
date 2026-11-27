@@ -1,18 +1,18 @@
 /**
  * Checkout-funnel events recorded against a session.
  *
- * {@link CheckoutEvents.create} always records `CheckoutVisited` - it is the
- * call that opens the funnel record. Every later state is reported through
- * {@link CheckoutEvents.update} with one of the remaining values, which lets the
- * server reconstruct where a prospect abandoned checkout - before or after
- * entering shipping or payment details - and which upsells they were shown.
+ * `CheckoutVisited`, `AddedShippingInfo` and `AddedPaymentInfo` are sent with
+ * {@link CheckoutEvents.create}; the upsell and order values are sent with
+ * {@link CheckoutEvents.update}. Together they let the server reconstruct where
+ * a prospect abandoned checkout - before or after entering shipping or payment
+ * details - and which upsells they were shown.
  */
 export const CheckoutEvent = Object.freeze({
-  /** The prospect reached the checkout page. Recorded implicitly by `create()`. */
+  /** The prospect reached the checkout page. The default for `create()`. */
   CheckoutVisited: 'checkout_visited',
-  /** The prospect submitted their shipping details. */
+  /** The prospect submitted their shipping details. Send with `create()`. */
   AddedShippingInfo: 'added_shipping_info',
-  /** The prospect submitted their payment details. Send `payment_method` with it. */
+  /** The prospect submitted their payment details. Send with `create()`, with `payment_method`. */
   AddedPaymentInfo: 'added_payment_info',
   /** An upsell was presented to the prospect. */
   UpsellOffered: 'upsell_offered',

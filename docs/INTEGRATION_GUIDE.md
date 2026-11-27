@@ -583,17 +583,26 @@ server-side, so the SDK does not send them.
 
 ### `checkoutEvents()`
 
-| Method                                                                          | HTTP | Path                                            |
-| ------------------------------------------------------------------------------- | ---- | ----------------------------------------------- |
-| `create(session: string, data?: Record<string, unknown>): Promise<Response<T>>` | POST | `/v1/sales/checkout-events/create`              |
-| `update(options: CheckoutEventUpdateOptions): Promise<Response<T>>`             | PUT  | `/v1/sales/checkout-events/update/{session_id}` |
+| Method                                                                                                 | HTTP | Path                                            |
+| ------------------------------------------------------------------------------------------------------ | ---- | ----------------------------------------------- |
+| `create(session: string, data?: Record<string, unknown>, event?: CheckoutEvent): Promise<Response<T>>` | POST | `/v1/sales/checkout-events/create`              |
+| `update(options: CheckoutEventUpdateOptions): Promise<Response<T>>`                                    | PUT  | `/v1/sales/checkout-events/update/{session_id}` |
 
-`create()` always records `CheckoutEvent.CheckoutVisited` and defaults
-`currency` to `USD` when the payload does not supply one. `update()`'s options
-are `{ session, event, data? }`; the payload can never override `event`. Report
+`create()` records `CheckoutEvent.CheckoutVisited` by default and defaults
+`currency` to `USD` when the payload does not supply one. Call it again with
 `CheckoutEvent.AddedShippingInfo` when the visitor submits shipping details and
 `CheckoutEvent.AddedPaymentInfo` (with `payment_method` in `data`) when they
-submit payment details.
+submit payment details - not `update()`, which returns 404 until a checkout
+record exists for the session. `update()` covers the upsell and order stages;
+its options are `{ session, event, data? }`. Neither payload can override
+`event`.
+
+```ts
+const checkout = client.checkoutEvents();
+await checkout.create(sessionId, { product_id: productId });
+await checkout.create(sessionId, { product_id: productId, order_total: 159.99 }, CheckoutEvent.AddedShippingInfo);
+await checkout.create(sessionId, { payment_method: 'card', order_total: 159.99 }, CheckoutEvent.AddedPaymentInfo);
+```
 
 ### `teleforms()`
 

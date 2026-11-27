@@ -29,11 +29,13 @@ export interface CheckoutEventUpdateOptions {
  * finally whether the order was placed or declined. Together those events are
  * what makes checkout abandonment measurable.
  *
- * {@link CheckoutEvents.create} opens the record and always registers
- * `checkout_visited`; every later state goes through
- * {@link CheckoutEvents.update} with the matching {@link CheckoutEvent}. Neither
- * call can have its event overridden by the extra payload, so the funnel state
- * the server records is always the one the SDK's caller chose explicitly.
+ * {@link CheckoutEvents.create} records the pre-order stages: `checkout_visited`
+ * (the default) when the checkout page opens, then `added_shipping_info` and
+ * `added_payment_info` as the visitor fills in the form. The upsell and order
+ * stages go through {@link CheckoutEvents.update} with the matching
+ * {@link CheckoutEvent}. Neither call can have its event overridden by the
+ * extra payload, so the funnel state the server records is always the one the
+ * SDK's caller chose explicitly.
  */
 export class CheckoutEvents extends AbstractResource {
   /**
@@ -44,17 +46,23 @@ export class CheckoutEvents extends AbstractResource {
   }
 
   /**
-   * Opens the checkout record for a session, registering `checkout_visited`.
+   * Records a pre-order checkout stage for a session.
    *
-   * Call this once, when the visitor reaches the checkout page. The event is
-   * fixed - this is the call that starts the funnel record - and `currency`
-   * defaults to `USD` when you do not supply one, since the server requires a
-   * currency to interpret any amounts in the payload.
+   * Call it with the default `CheckoutVisited` when the visitor reaches the
+   * checkout page, then again with `AddedShippingInfo` when they submit
+   * shipping details and `AddedPaymentInfo` (with a `payment_method` of
+   * `apple_pay` | `google_pay` | `card` | `paypal` in `data`) when they submit
+   * payment details. Use this method, not {@link CheckoutEvents.update}, for
+   * those stages: `update()` fails with a 404 until a checkout record exists
+   * for the session. `currency` defaults to `USD` when you do not supply one,
+   * since the server requires a currency to interpret any amounts in the
+   * payload.
    *
    * @param session The session reaching checkout.
    * @param data Additional context, e.g. `order_value`, `order_total`,
-   *   `currency`, or `product_id` (the product being checked out). Cannot
-   *   override `session` or `event`.
+   *   `currency`, `payment_method`, or `product_id` (the product being checked
+   *   out). Cannot override `session` or `event`.
+   * @param event The stage to record. Defaults to `CheckoutVisited`.
    * @returns The created checkout-event record.
    * @throws {ValidationError} If the session or payload is rejected.
    * @throws {ApiError} On any other non-2xx status.
@@ -63,13 +71,14 @@ export class CheckoutEvents extends AbstractResource {
   async create<T = Record<string, unknown>>(
     session: string,
     data: Record<string, unknown> = {},
+    event: CheckoutEvent = CheckoutEvent.CheckoutVisited,
   ): Promise<ApiResponse<T>> {
     // Data first, fixed keys last: PHP's `+` keeps the left operand on a
     // conflict, so the payload must not be able to rewrite session or event.
     const body: Record<string, unknown> = {
       ...data,
       session,
-      event: CheckoutEvent.CheckoutVisited,
+      event,
     };
 
     if (body.currency === undefined || body.currency === '') {
@@ -87,11 +96,10 @@ export class CheckoutEvents extends AbstractResource {
   /**
    * Advances a session's checkout record to a new funnel state.
    *
-   * Send one call per state the visitor reaches: shipping details entered
-   * (`AddedShippingInfo`), payment details entered (`AddedPaymentInfo`, with a
-   * `payment_method` of `apple_pay` | `google_pay` | `card` | `paypal` in
-   * `data`), an upsell offered, then accepted or declined, then the order placed
-   * or declined. The payload carries whatever
+   * Send one call per post-checkout state the visitor reaches: an upsell
+   * offered, then accepted or declined, then the order placed or declined.
+   * Shipping and payment details are recorded with
+   * {@link CheckoutEvents.create}, not here. The payload carries whatever
    * context that state needs, but it can never override `event` - the state
    * recorded is always the one you passed explicitly. For an `OrderPlaced` event,
    * `data` may include an optional `payment` object describing the settled
